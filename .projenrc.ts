@@ -5,8 +5,9 @@ const project = new typescript.TypeScriptProject({
   deps: ["projen"],
   jest: false,
   license: "MIT",
-  name: "projen-bundle-lambda-function-code",
+  name: "@nikovirtala/projen-bundle-lambda-function-code",
   prettier: true,
   projenrcTs: true,
+  releaseToNpm: true,
 });
 project.synth();

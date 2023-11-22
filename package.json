@@ -1,5 +1,5 @@
 {
-  "name": "projen-bundle-lambda-function-code",
+  "name": "@nikovirtala/projen-bundle-lambda-function-code",
   "scripts": {
     "build": "npx projen build",
     "bump": "npx projen bump",
