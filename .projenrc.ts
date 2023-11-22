@@ -1,7 +1,8 @@
-import { typescript } from 'projen';
+import { typescript } from "projen";
 const project = new typescript.TypeScriptProject({
-  defaultReleaseBranch: 'main',
-  name: 'projen-bundle-lambda-function-code',
+  defaultReleaseBranch: "main",
+  name: "projen-bundle-lambda-function-code",
+  prettier: true,
   projenrcTs: true,
 
   // deps: [],                /* Runtime dependencies of this module. */
