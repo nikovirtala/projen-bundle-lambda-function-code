@@ -9,5 +9,8 @@ const project = new typescript.TypeScriptProject({
   npmAccess: NpmAccess.PUBLIC,
   prettier: true,
   projenrcTs: true,
+  releaseToNpm: true,
+  repository:
+    "https://github.com/nikovirtala/projen-bundle-lambda-function-code.git",
 });
 project.synth();

@@ -1,5 +1,9 @@
 {
   "name": "projen-bundle-lambda-function-code",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nikovirtala/projen-bundle-lambda-function-code.git"
+  },
   "scripts": {
     "build": "npx projen build",
     "bump": "npx projen bump",
