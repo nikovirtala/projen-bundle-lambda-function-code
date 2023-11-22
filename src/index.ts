@@ -8,7 +8,7 @@ export const TYPESCRIPT_LAMBDA_EXT = ".lambda.ts";
 /**
  * Common options for auto discovering project subcomponents.
  */
-export interface AutoDiscoverCommonOptions {
+export interface FunctionCodeBundlerCommonOptions {
   /**
    * Path to the tsconfig file to use for integration tests.
    */
@@ -21,9 +21,10 @@ export interface AutoDiscoverCommonOptions {
 }
 
 /**
- * Options for `LambdaAutoDiscover`
+ * Options for `LambdaFunctionCodeBundler`
  */
-export interface LambdaAutoDiscoverOptions extends AutoDiscoverCommonOptions {
+export interface LambdaFunctionCodeBundlerOptions
+  extends FunctionCodeBundlerCommonOptions {
   /**
    * Project source tree (relative to project output directory).
    */
@@ -38,8 +39,8 @@ export interface LambdaAutoDiscoverOptions extends AutoDiscoverCommonOptions {
 /**
  * Creates lambdas from entry points discovered in the project's source tree.
  */
-export class LambdaAutoDiscover extends cdk.AutoDiscoverBase {
-  constructor(project: Project, options: LambdaAutoDiscoverOptions) {
+export class LambdaFunctionCodeBundler extends cdk.AutoDiscoverBase {
+  constructor(project: Project, options: LambdaFunctionCodeBundlerOptions) {
     super(project, {
       projectdir: options.srcdir,
       extension: TYPESCRIPT_LAMBDA_EXT,
@@ -56,27 +57,28 @@ export class LambdaAutoDiscover extends cdk.AutoDiscoverBase {
 }
 
 /**
- * Options for `AutoDiscover`
+ * Options for `FunctionCodeBundler`
  */
-export interface AutoDiscoverOptions extends LambdaAutoDiscoverOptions {
+export interface FunctionCodeBundlerOptions
+  extends LambdaFunctionCodeBundlerOptions {
   /**
    * Auto-discover lambda functions.
    *
    * @default true
    */
-  readonly lambdaAutoDiscover?: boolean;
+  readonly lambdaFunctionCodeBundler?: boolean;
 }
 
 /**
  * Discovers and creates integration tests and lambdas from code in the
  * project's source and test trees.
  */
-export class AutoDiscover extends Component {
-  constructor(project: Project, options: AutoDiscoverOptions) {
+export class FunctionCodeBundler extends Component {
+  constructor(project: Project, options: FunctionCodeBundlerOptions) {
     super(project);
 
-    if (options.lambdaAutoDiscover ?? true) {
-      new LambdaAutoDiscover(this.project, {
+    if (options.lambdaFunctionCodeBundler ?? true) {
+      new LambdaFunctionCodeBundler(this.project, {
         cdkDeps: options.cdkDeps,
         tsconfigPath: options.tsconfigPath,
         srcdir: options.srcdir,
