@@ -68,6 +68,10 @@
       "type": "build"
     },
     {
+      "name": "case",
+      "type": "runtime"
+    },
+    {
       "name": "projen",
       "type": "runtime"
     }

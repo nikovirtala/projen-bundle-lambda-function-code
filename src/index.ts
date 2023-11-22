@@ -1,9 +1,6 @@
 import { Component, Project, awscdk, cdk } from "projen";
-
-/**
- * Suffix for AWS Lambda handlers.
- */
-export const TYPESCRIPT_LAMBDA_EXT = ".lambda.ts";
+import { TYPESCRIPT_LAMBDA_EXT } from "./internal";
+import { LambdaFunction, LambdaFunctionCommonOptions } from "./lambda-function";
 
 /**
  * Common options for auto discovering project subcomponents.
@@ -32,7 +29,7 @@ export interface LambdaAutoDiscoverOptions extends AutoDiscoverCommonOptions {
   /**
    * Options for AWS Lambda functions.
    */
-  readonly lambdaOptions?: awscdk.LambdaFunctionCommonOptions;
+  readonly lambdaOptions?: LambdaFunctionCommonOptions;
 }
 
 /**
@@ -46,7 +43,7 @@ export class LambdaAutoDiscover extends cdk.AutoDiscoverBase {
     });
 
     for (const entrypoint of this.entrypoints) {
-      new awscdk.LambdaFunction(this.project, {
+      new LambdaFunction(this.project, {
         entrypoint,
         cdkDeps: options.cdkDeps,
         ...options.lambdaOptions,

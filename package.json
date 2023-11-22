@@ -37,6 +37,7 @@
     "typescript": "^5.3.2"
   },
   "dependencies": {
+    "case": "^1.6.3",
     "projen": "^0.77.1"
   },
   "main": "lib/index.js",

@@ -3,7 +3,7 @@ import { NpmAccess } from "projen/lib/javascript";
 const project = new typescript.TypeScriptProject({
   copyrightOwner: "Niko Virtala",
   defaultReleaseBranch: "main",
-  deps: ["projen"],
+  deps: ["case", "projen"],
   jest: false,
   license: "MIT",
   name: "@nikovirtala/projen-bundle-lambda-function-code",
