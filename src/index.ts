@@ -1,3 +1,4 @@
+import { TypeScriptCode } from "@mrgrain/cdk-esbuild";
 import { Component, Project, awscdk, cdk } from "projen";
 
 /**
@@ -47,11 +48,12 @@ export class LambdaFunctionCodeBundler extends cdk.AutoDiscoverBase {
     });
 
     for (const entrypoint of this.entrypoints) {
-      new awscdk.LambdaFunction(this.project, {
+      new TypeScriptCode(entrypoint);
+      /*       new awscdk.LambdaFunction(this.project, {
         entrypoint,
         cdkDeps: options.cdkDeps,
         ...options.lambdaOptions,
-      });
+      }); */
     }
   }
 }

@@ -23,6 +23,7 @@
     "@types/node": "^18",
     "@typescript-eslint/eslint-plugin": "^6",
     "@typescript-eslint/parser": "^6",
+    "aws-cdk-lib": "2.51.0",
     "constructs": "^10.0.0",
     "eslint": "^8",
     "eslint-config-prettier": "^9.0.0",
@@ -36,7 +37,11 @@
     "ts-node": "^10.9.1",
     "typescript": "^5.3.2"
   },
+  "peerDependencies": {
+    "aws-cdk-lib": "^2.51.0"
+  },
   "dependencies": {
+    "@mrgrain/cdk-esbuild": "^5.0.5",
     "projen": "^0.77.1"
   },
   "main": "lib/index.js",

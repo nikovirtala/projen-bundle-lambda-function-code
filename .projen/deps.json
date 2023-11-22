@@ -68,6 +68,15 @@
       "type": "build"
     },
     {
+      "name": "aws-cdk-lib",
+      "version": "^2.51.0",
+      "type": "peer"
+    },
+    {
+      "name": "@mrgrain/cdk-esbuild",
+      "type": "runtime"
+    },
+    {
       "name": "projen",
       "type": "runtime"
     }
