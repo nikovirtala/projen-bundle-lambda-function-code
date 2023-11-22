@@ -4,6 +4,7 @@ const project = new typescript.TypeScriptProject({
   copyrightOwner: "Niko Virtala",
   defaultReleaseBranch: "main",
   deps: ["projen"],
+  jest: false,
   license: "MIT",
   name: "projen-bundle-lambda-function-code",
   npmAccess: NpmAccess.PUBLIC,
