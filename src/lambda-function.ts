@@ -1,13 +1,6 @@
 import * as path from "path";
 import { pascal } from "case";
-import {
-  Component,
-  Project,
-  SourceCode,
-  awscdk,
-  javascript,
-  typescript,
-} from "projen";
+import { Component, Project, SourceCode, javascript, typescript } from "projen";
 import { convertToPosixPath, TYPESCRIPT_LAMBDA_EXT } from "./internal";
 
 /**
@@ -79,11 +72,6 @@ export interface LambdaFunctionOptions extends LambdaFunctionCommonOptions {
    * the extension `Function` (e.g. `ResizeImageFunction`).
    */
   readonly constructName?: string;
-
-  /**
-   * AWS CDK dependency manager.
-   */
-  readonly cdkDeps: awscdk.AwsCdkDeps;
 }
 
 /**
@@ -116,7 +104,6 @@ export class LambdaFunction extends Component {
   constructor(project: Project, options: LambdaFunctionOptions) {
     super(project);
 
-    const cdkDeps = options.cdkDeps;
     const bundler = javascript.Bundler.of(project);
     if (!bundler) {
       throw new Error(
@@ -143,7 +130,7 @@ export class LambdaFunction extends Component {
       path.dirname(entrypoint),
       path.basename(entrypoint, TYPESCRIPT_LAMBDA_EXT),
     );
-    const constructFile = options.constructFile ?? `${basePath}-function.ts`;
+    const constructFile = options.constructFile ?? `${basePath}-code.ts`;
 
     if (path.extname(constructFile) !== ".ts") {
       throw new Error(
@@ -153,8 +140,7 @@ export class LambdaFunction extends Component {
 
     // type names
     const constructName =
-      options.constructName ?? pascal(path.basename(basePath)) + "Function";
-    const propsType = `${constructName}Props`;
+      options.constructName ?? pascal(path.basename(basePath)) + "FunctionCode";
 
     const bundle = bundler.addBundle(entrypoint, {
       target: runtime.esbuildTarget,
@@ -183,56 +169,11 @@ export class LambdaFunction extends Component {
       src.line(`// ${src.marker}`);
     }
     src.line("import * as path from 'path';");
-
-    if (cdkDeps.cdkMajorVersion === 1) {
-      src.line("import * as lambda from '@aws-cdk/aws-lambda';");
-      src.line("import { Construct } from '@aws-cdk/core';");
-      cdkDeps.addV1Dependencies("@aws-cdk/aws-lambda");
-      cdkDeps.addV1Dependencies("@aws-cdk/core");
-    } else {
-      src.line("import * as lambda from 'aws-cdk-lib/aws-lambda';");
-      src.line("import { Construct } from 'constructs';");
-    }
-
+    src.line("import { aws_lambda } from 'aws-cdk-lib';");
     src.line();
-    src.line("/**");
-    src.line(` * Props for ${constructName}`);
-    src.line(" */");
-    src.open(`export interface ${propsType} extends lambda.FunctionOptions {`);
-    src.close("}");
-    src.line();
-    src.line("/**");
-    src.line(
-      ` * An AWS Lambda function which executes ${convertToPosixPath(
-        basePath,
-      )}.`,
-    );
-    src.line(" */");
-    src.open(`export class ${constructName} extends lambda.Function {`);
-
-    src.open(
-      `constructor(scope: Construct, id: string, props?: ${propsType}) {`,
-    );
-    src.open("super(scope, id, {");
-    src.line(`description: '${convertToPosixPath(entrypoint)}',`);
-    src.line("...props,");
-    src.line(
-      `runtime: new lambda.Runtime('${runtime.functionRuntime}', lambda.RuntimeFamily.NODEJS),`,
-    );
-    src.line("handler: 'index.handler',");
-    src.line(
-      `code: lambda.Code.fromAsset(path.join(__dirname, '${convertToPosixPath(
-        relativeOutfile,
-      )}')),`,
-    );
-    src.close("});");
-    if (options.awsSdkConnectionReuse ?? true) {
-      src.line(
-        "this.addEnvironment('AWS_NODEJS_CONNECTION_REUSE_ENABLED', '1', { removeInEdge: true });",
-      );
-    }
-    src.close("}");
-    src.close("}");
+    src.open(`export const ${constructName} = aws_lambda.Code.fromAsset(`);
+    src.line(`path.join(__dirname, '${convertToPosixPath(relativeOutfile)}'),`);
+    src.close(");");
 
     this.project.logger.verbose(
       `${basePath}: construct "${constructName}" generated under "${constructFile}"`,
@@ -264,46 +205,6 @@ export interface LambdaRuntimeOptions {
  * The runtime for the AWS Lambda function.
  */
 export class LambdaRuntime {
-  /**
-   * Node.js 10.x
-   * @deprecated NodeJS10 has been deprecated on February 14, 2022
-   */
-  public static readonly NODEJS_10_X = new LambdaRuntime(
-    "nodejs10.x",
-    "node10",
-    { defaultExternals: ["aws-sdk"] },
-  );
-
-  /**
-   * Node.js 12.x
-   * @deprecated NodeJS12 has been deprecated on April 30, 2023
-   */
-  public static readonly NODEJS_12_X = new LambdaRuntime(
-    "nodejs12.x",
-    "node12",
-    { defaultExternals: ["aws-sdk"] },
-  );
-
-  /**
-   * Node.js 14.x
-   * @deprecated NodeJS14 will be deprecated on November 27, 2023
-   */
-  public static readonly NODEJS_14_X = new LambdaRuntime(
-    "nodejs14.x",
-    "node14",
-    { defaultExternals: ["aws-sdk"] },
-  );
-
-  /**
-   * Node.js 16.x
-   * @deprecated NodeJS16 will be deprecated on March 11, 2024
-   */
-  public static readonly NODEJS_16_X = new LambdaRuntime(
-    "nodejs16.x",
-    "node16",
-    { defaultExternals: ["aws-sdk"] },
-  );
-
   /**
    * Node.js 18.x
    */

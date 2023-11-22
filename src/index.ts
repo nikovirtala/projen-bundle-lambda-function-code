@@ -1,4 +1,4 @@
-import { Component, Project, awscdk, cdk } from "projen";
+import { Component, Project, cdk } from "projen";
 import { TYPESCRIPT_LAMBDA_EXT } from "./internal";
 import { LambdaFunction, LambdaFunctionCommonOptions } from "./lambda-function";
 
@@ -10,11 +10,6 @@ export interface AutoDiscoverCommonOptions {
    * Path to the tsconfig file to use for integration tests.
    */
   readonly tsconfigPath: string;
-
-  /**
-   * AWS CDK dependency manager.
-   */
-  readonly cdkDeps: awscdk.AwsCdkDeps;
 }
 
 /**
@@ -45,7 +40,6 @@ export class LambdaAutoDiscover extends cdk.AutoDiscoverBase {
     for (const entrypoint of this.entrypoints) {
       new LambdaFunction(this.project, {
         entrypoint,
-        cdkDeps: options.cdkDeps,
         ...options.lambdaOptions,
       });
     }
@@ -74,7 +68,6 @@ export class AutoDiscover extends Component {
 
     if (options.lambdaAutoDiscover ?? true) {
       new LambdaAutoDiscover(this.project, {
-        cdkDeps: options.cdkDeps,
         tsconfigPath: options.tsconfigPath,
         srcdir: options.srcdir,
         lambdaOptions: options.lambdaOptions,
