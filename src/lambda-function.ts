@@ -1,7 +1,7 @@
 import * as path from "path";
 import { pascal } from "case";
 import { Component, Project, SourceCode, javascript, typescript } from "projen";
-import { convertToPosixPath, TYPESCRIPT_LAMBDA_EXT } from "./internal";
+import { convertToPosixPath } from "./internal";
 
 /**
  * Common options for `LambdaFunction`. Applies to all functions in
@@ -55,6 +55,13 @@ export interface LambdaFunctionOptions extends LambdaFunctionCommonOptions {
    * @example "src/subdir/foo.lambda.ts"
    */
   readonly entrypoint: string;
+
+  /**
+   * Suffix for AWS Lambda handlers.
+   *
+   * @example ".lambda.ts"
+   */
+  readonly extension: string;
 
   /**
    * The name of the generated TypeScript source file. This file should also be
@@ -120,15 +127,15 @@ export class LambdaFunction extends Component {
 
     const entrypoint = options.entrypoint;
 
-    if (!entrypoint.endsWith(TYPESCRIPT_LAMBDA_EXT)) {
-      throw new Error(
-        `${entrypoint} must have a ${TYPESCRIPT_LAMBDA_EXT} extension`,
-      );
+    const extension = options.extension ?? ".lambda.ts";
+
+    if (!entrypoint.endsWith(extension)) {
+      throw new Error(`${entrypoint} must have a ${extension} extension`);
     }
 
     const basePath = path.posix.join(
       path.dirname(entrypoint),
-      path.basename(entrypoint, TYPESCRIPT_LAMBDA_EXT),
+      path.basename(entrypoint, extension),
     );
     const constructFile = options.constructFile ?? `${basePath}-code.ts`;
 
@@ -241,6 +248,6 @@ export class LambdaRuntime {
      */
     options?: LambdaRuntimeOptions,
   ) {
-    this.defaultExternals = options?.defaultExternals ?? ["@aws-sdk/*"];
+    this.defaultExternals = options?.defaultExternals ?? [];
   }
 }
