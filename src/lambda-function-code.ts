@@ -4,10 +4,10 @@ import { Component, Project, SourceCode, javascript, typescript } from "projen";
 import { convertToPosixPath } from "./internal";
 
 /**
- * Common options for `LambdaFunction`. Applies to all functions in
+ * Common options for `LambdaFunctionCodeBundle`. Applies to all functions in
  * auto-discovery.
  */
-export interface LambdaFunctionCommonOptions {
+export interface LambdaFunctionCodeBundleCommonOptions {
   /**
    * The node.js version to target.
    *
@@ -45,7 +45,8 @@ export interface LambdaFunctionCommonOptions {
 /**
  * Options for `Function`.
  */
-export interface LambdaFunctionOptions extends LambdaFunctionCommonOptions {
+export interface LambdaFunctionCodeBundleOptions
+  extends LambdaFunctionCodeBundleCommonOptions {
   /**
    * A path from the project root directory to a TypeScript file which contains
    * the AWS Lambda handler entrypoint (exports a `handler` function).
@@ -85,7 +86,7 @@ export interface LambdaFunctionOptions extends LambdaFunctionCommonOptions {
  * Generates a pre-bundled AWS Lambda function construct from handler code.
  *
  * To use this, create an AWS Lambda handler file under your source tree with
- * the `.lambda.ts` extension and add a `LambdaFunction` component to your
+ * the `.lambda.ts` extension and add a `LambdaFunctionCodeBundle` component to your
  * typescript project pointing to this entrypoint.
  *
  * This will add a task to your "compile" step which will use `esbuild` to
@@ -96,19 +97,19 @@ export interface LambdaFunctionOptions extends LambdaFunctionCommonOptions {
  *
  * @example
  *
- * new LambdaFunction(myProject, {
+ * new LambdaFunctionCodeBundle(myProject, {
  *   srcdir: myProject.srcdir,
  *   entrypoint: 'src/foo.lambda.ts',
  * });
  */
-export class LambdaFunction extends Component {
+export class LambdaFunctionCodeBundle extends Component {
   /**
    * Defines a pre-bundled AWS Lambda function construct from handler code.
    *
    * @param project The project to use
    * @param options Options
    */
-  constructor(project: Project, options: LambdaFunctionOptions) {
+  constructor(project: Project, options: LambdaFunctionCodeBundleOptions) {
     super(project);
 
     const bundler = javascript.Bundler.of(project);

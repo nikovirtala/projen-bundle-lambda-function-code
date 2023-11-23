@@ -1,10 +1,13 @@
-import { Component, Project, cdk } from "projen";
-import { LambdaFunction, LambdaFunctionCommonOptions } from "./lambda-function";
+import { Project, cdk } from "projen";
+import {
+  LambdaFunctionCodeBundle,
+  LambdaFunctionCodeBundleCommonOptions,
+} from "./lambda-function-code";
 
 /**
- * Options for `LambdaAutoDiscover`
+ * Options for `LambdaFunctionCodeBundler`
  */
-export interface LambdaAutoDiscoverOptions {
+export interface LambdaFunctionCodeBundlerOptions {
   /**
    * Locate files with the given extension.
    *
@@ -20,54 +23,24 @@ export interface LambdaAutoDiscoverOptions {
   /**
    * Options for AWS Lambda functions.
    */
-  readonly lambdaOptions?: LambdaFunctionCommonOptions;
+  readonly lambdaOptions?: LambdaFunctionCodeBundleCommonOptions;
 }
 
 /**
  * Creates lambdas from entry points discovered in the project's source tree.
  */
-export class LambdaAutoDiscover extends cdk.AutoDiscoverBase {
-  constructor(project: Project, options: LambdaAutoDiscoverOptions) {
+export class LambdaFunctionCodeBundler extends cdk.AutoDiscoverBase {
+  constructor(project: Project, options: LambdaFunctionCodeBundlerOptions) {
     super(project, {
       projectdir: options.srcdir,
       extension: options.extension,
     });
 
     for (const entrypoint of this.entrypoints) {
-      new LambdaFunction(this.project, {
+      new LambdaFunctionCodeBundle(this.project, {
         entrypoint: entrypoint,
         extension: options.extension,
         ...options.lambdaOptions,
-      });
-    }
-  }
-}
-
-/**
- * Options for `AutoDiscover`
- */
-export interface AutoDiscoverOptions extends LambdaAutoDiscoverOptions {
-  /**
-   * Auto-discover lambda functions.
-   *
-   * @default true
-   */
-  readonly lambdaAutoDiscover?: boolean;
-}
-
-/**
- * Discovers and creates integration tests and lambdas from code in the
- * project's source and test trees.
- */
-export class AutoDiscover extends Component {
-  constructor(project: Project, options: AutoDiscoverOptions) {
-    super(project);
-
-    if (options.lambdaAutoDiscover ?? true) {
-      new LambdaAutoDiscover(this.project, {
-        srcdir: options.srcdir,
-        extension: options.extension,
-        lambdaOptions: options.lambdaOptions,
       });
     }
   }
