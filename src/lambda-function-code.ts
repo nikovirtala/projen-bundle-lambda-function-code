@@ -4,10 +4,9 @@ import { Component, Project, SourceCode, javascript, typescript } from "projen";
 import { convertToPosixPath } from "./internal";
 
 /**
- * Common options for `LambdaFunction`. Applies to all functions in
- * auto-discovery.
+ * Common options for `LambdaFunctionCodeBundle`.
  */
-export interface LambdaFunctionCommonOptions {
+export interface LambdaFunctionCodeBundleCommonOptions {
   /**
    * The node.js version to target.
    *
@@ -16,7 +15,7 @@ export interface LambdaFunctionCommonOptions {
   readonly runtime?: LambdaRuntime;
 
   /**
-   * Bundling options for this AWS Lambda function.
+   * Bundling options for this AWS Lambda Function.
    *
    * If not specified the default bundling options specified for the project
    * `Bundler` instance will be used.
@@ -24,28 +23,13 @@ export interface LambdaFunctionCommonOptions {
    * @default - defaults
    */
   readonly bundlingOptions?: javascript.BundlingOptions;
-
-  /**
-   * Whether to automatically reuse TCP connections when working with the AWS
-   * SDK for JavaScript.
-   *
-   * This sets the `AWS_NODEJS_CONNECTION_REUSE_ENABLED` environment variable
-   * to `1`.
-   *
-   * Not applicable when `edgeLambda` is set to `true` because environment
-   * variables are not supported in Lambda@Edge.
-   *
-   * @see https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/node-reusing-connections.html
-   *
-   * @default true
-   */
-  readonly awsSdkConnectionReuse?: boolean;
 }
 
 /**
  * Options for `Function`.
  */
-export interface LambdaFunctionOptions extends LambdaFunctionCommonOptions {
+export interface LambdaFunctionCodeBundleOptions
+  extends LambdaFunctionCodeBundleCommonOptions {
   /**
    * A path from the project root directory to a TypeScript file which contains
    * the AWS Lambda handler entrypoint (exports a `handler` function).
@@ -82,10 +66,10 @@ export interface LambdaFunctionOptions extends LambdaFunctionCommonOptions {
 }
 
 /**
- * Generates a pre-bundled AWS Lambda function construct from handler code.
+ * Generates a pre-bundled AWS Lambda Function code bundle construct from handler code.
  *
  * To use this, create an AWS Lambda handler file under your source tree with
- * the `.lambda.ts` extension and add a `LambdaFunction` component to your
+ * the `.lambda.ts` extension and add a `LambdaFunctionCodeBundle` component to your
  * typescript project pointing to this entrypoint.
  *
  * This will add a task to your "compile" step which will use `esbuild` to
@@ -96,19 +80,19 @@ export interface LambdaFunctionOptions extends LambdaFunctionCommonOptions {
  *
  * @example
  *
- * new LambdaFunction(myProject, {
+ * new LambdaFunctionCodeBundle(myProject, {
  *   srcdir: myProject.srcdir,
  *   entrypoint: 'src/foo.lambda.ts',
  * });
  */
-export class LambdaFunction extends Component {
+export class LambdaFunctionCodeBundle extends Component {
   /**
-   * Defines a pre-bundled AWS Lambda function construct from handler code.
+   * Defines a pre-bundled AWS Lambda Function construct from handler code.
    *
    * @param project The project to use
    * @param options Options
    */
-  constructor(project: Project, options: LambdaFunctionOptions) {
+  constructor(project: Project, options: LambdaFunctionCodeBundleOptions) {
     super(project);
 
     const bundler = javascript.Bundler.of(project);
@@ -197,7 +181,7 @@ export class LambdaFunction extends Component {
 }
 
 /**
- * Options for the AWS Lambda function runtime
+ * Options for the AWS Lambda Function runtime
  */
 export interface LambdaRuntimeOptions {
   /**
@@ -209,7 +193,7 @@ export interface LambdaRuntimeOptions {
 }
 
 /**
- * The runtime for the AWS Lambda function.
+ * The runtime for the AWS Lambda Function.
  */
 export class LambdaRuntime {
   /**
