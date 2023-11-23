@@ -1,5 +1,4 @@
-import { typescript } from "projen";
-import { NpmAccess } from "projen/lib/javascript";
+import { typescript, javascript } from "projen";
 const project = new typescript.TypeScriptProject({
   copyrightOwner: "Niko Virtala",
   defaultReleaseBranch: "main",
@@ -7,7 +6,7 @@ const project = new typescript.TypeScriptProject({
   jest: false,
   license: "MIT",
   name: "@nikovirtala/projen-bundle-lambda-function-code",
-  npmAccess: NpmAccess.PUBLIC,
+  npmAccess: javascript.NpmAccess.PUBLIC,
   prettier: true,
   projenrcTs: true,
   releaseToNpm: true,
