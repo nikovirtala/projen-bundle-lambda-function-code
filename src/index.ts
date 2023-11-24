@@ -1,7 +1,7 @@
 import { Project, cdk } from "projen";
 import {
   LambdaFunctionCodeBundle,
-  LambdaFunctionCodeBundleCommonOptions,
+  LambdaFunctionCodeBundleOptions,
 } from "./lambda-function-code";
 
 /**
@@ -23,7 +23,7 @@ export interface LambdaFunctionCodeBundlerOptions {
   /**
    * Options for AWS Lambda Function bundling.
    */
-  readonly lambdaOptions?: LambdaFunctionCodeBundleCommonOptions;
+  readonly buildOptions?: LambdaFunctionCodeBundleOptions;
 }
 
 /**
@@ -40,7 +40,7 @@ export class LambdaFunctionCodeBundler extends cdk.AutoDiscoverBase {
       new LambdaFunctionCodeBundle(this.project, {
         entrypoint: entrypoint,
         extension: options.extension,
-        ...options.lambdaOptions,
+        ...options.buildOptions,
       });
     }
   }
