@@ -1,35 +1,13 @@
 import * as path from "path";
 import { pascal } from "case";
 import { Component, Project, SourceCode, javascript, typescript } from "projen";
-import { convertToPosixPath } from "./internal";
+import { Bundler, BundlingOptions } from "./bundler";
+import { convertToPosixPath } from "./utils";
 
 /**
- * Common options for `LambdaFunctionCodeBundle`.
+ * Options for `LambdaFunctionCodeBundle`.
  */
-export interface LambdaFunctionCodeBundleCommonOptions {
-  /**
-   * The node.js version to target.
-   *
-   * @default Runtime.NODEJS_18_X
-   */
-  readonly runtime?: LambdaRuntime;
-
-  /**
-   * Bundling options for this AWS Lambda Function.
-   *
-   * If not specified the default bundling options specified for the project
-   * `Bundler` instance will be used.
-   *
-   * @default - defaults
-   */
-  readonly bundlingOptions?: javascript.BundlingOptions;
-}
-
-/**
- * Options for `Function`.
- */
-export interface LambdaFunctionCodeBundleOptions
-  extends LambdaFunctionCodeBundleCommonOptions {
+export interface LambdaFunctionCodeBundleOptions {
   /**
    * A path from the project root directory to a TypeScript file which contains
    * the AWS Lambda handler entrypoint (exports a `handler` function).
@@ -63,6 +41,16 @@ export interface LambdaFunctionCodeBundleOptions
    * the extension `Function` (e.g. `ResizeImageFunction`).
    */
   readonly constructName?: string;
+
+  /**
+   * Bundling options for this AWS Lambda Function.
+   *
+   * If not specified the default bundling options specified for the project
+   * `Bundler` instance will be used.
+   *
+   * @default - defaults
+   */
+  readonly bundlingOptions?: BundlingOptions;
 }
 
 /**
@@ -95,14 +83,12 @@ export class LambdaFunctionCodeBundle extends Component {
   constructor(project: Project, options: LambdaFunctionCodeBundleOptions) {
     super(project);
 
-    const bundler = javascript.Bundler.of(project);
+    const bundler = Bundler.of(project);
     if (!bundler) {
       throw new Error(
         "No bundler found. Please add a Bundler component to your project.",
       );
     }
-
-    const runtime = options.runtime ?? LambdaRuntime.NODEJS_18_X;
 
     // allow Lambda handler code to import dev-deps since they are only needed
     // during bundling
@@ -134,9 +120,6 @@ export class LambdaFunctionCodeBundle extends Component {
       options.constructName ?? pascal(path.basename(basePath)) + "FunctionCode";
 
     const bundle = bundler.addBundle(entrypoint, {
-      target: runtime.esbuildTarget,
-      platform: runtime.esbuildPlatform,
-      externals: runtime.defaultExternals,
       ...options.bundlingOptions,
       tsconfigPath: (project as typescript.TypeScriptProject)?.tsconfigDev
         ?.fileName,
@@ -172,66 +155,5 @@ export class LambdaFunctionCodeBundle extends Component {
     this.project.logger.verbose(
       `${basePath}: bundle task "${bundle.bundleTask.name}"`,
     );
-    if (bundle.watchTask) {
-      this.project.logger.verbose(
-        `${basePath}: bundle watch task "${bundle.watchTask.name}"`,
-      );
-    }
-  }
-}
-
-/**
- * Options for the AWS Lambda Function runtime
- */
-export interface LambdaRuntimeOptions {
-  /**
-   * Packages that are considered externals by default when bundling
-   *
-   * @default ['@aws-sdk/*']
-   */
-  readonly defaultExternals?: string[];
-}
-
-/**
- * The runtime for the AWS Lambda Function.
- */
-export class LambdaRuntime {
-  /**
-   * Node.js 18.x
-   */
-  public static readonly NODEJS_18_X = new LambdaRuntime(
-    "nodejs18.x",
-    "node18",
-  );
-
-  /**
-   * Node.js 20.x
-   */
-  public static readonly NODEJS_20_X = new LambdaRuntime(
-    "nodejs20.x",
-    "node20",
-  );
-
-  public readonly esbuildPlatform = "node";
-
-  public readonly defaultExternals: string[];
-
-  public constructor(
-    /**
-     * The Node.js runtime to use
-     */
-    public readonly functionRuntime: string,
-
-    /**
-     * The esbuild setting to use.
-     */
-    public readonly esbuildTarget: string,
-
-    /**
-     * Options for this runtime.
-     */
-    options?: LambdaRuntimeOptions,
-  ) {
-    this.defaultExternals = options?.defaultExternals ?? [];
   }
 }
