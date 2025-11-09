@@ -17,6 +17,9 @@ dist
 /.idea/
 /.projenrc.js
 tsconfig.tsbuildinfo
+biome.jsonc
+mise.toml
+vitest.config.ts
 /.gitattributes
 /.projenrc.ts
 /projenrc

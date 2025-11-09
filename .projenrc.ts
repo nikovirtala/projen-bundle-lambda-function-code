@@ -28,6 +28,7 @@ const project = new typescript.TypeScriptProject({
     prettier: false,
     projenrcTs: true,
     releaseToNpm: true,
+    repository: "https://github.com/nikovirtala/projen-bundle-lambda-function-code.git",
 });
 
 project.vscode?.extensions.addRecommendations("biomejs.biome");
@@ -45,5 +46,8 @@ project.vscode?.settings.addSettings({
 project.github
     ?.tryFindWorkflow("release")
     ?.file?.patch(JsonPatch.replace("/jobs/release_npm/steps/0/with/node-version", "24.x"));
+
+// remove once configured correctly to biome, mise and vitest components
+project.npmignore?.addPatterns("biome.jsonc", "mise.toml", "vitest.config.ts");
 
 project.synth();
