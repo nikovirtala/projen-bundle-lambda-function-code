@@ -1,6 +1,10 @@
 import { JsonPatch, javascript, typescript } from "projen";
 
 const project = new typescript.TypeScriptProject({
+    autoApproveOptions: {
+        secret: "GITHUB_TOKEN",
+        allowedUsernames: ["nikovirtala"],
+    },
     biome: true,
     biomeOptions: {
         biomeConfig: {
@@ -16,8 +20,17 @@ const project = new typescript.TypeScriptProject({
     },
     copyrightOwner: "Niko Virtala",
     defaultReleaseBranch: "main",
+    dependabot: false,
+    depsUpgradeOptions: {
+        workflowOptions: {
+            labels: ["auto-approve", "auto-merge"],
+        },
+    },
     deps: ["case", "projen"],
     eslint: false,
+    githubOptions: {
+        mergify: true,
+    },
     jest: false,
     license: "MIT",
     name: "@nikovirtala/projen-bundle-lambda-function-code",
