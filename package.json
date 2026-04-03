@@ -28,15 +28,21 @@
     "@types/node": "^18.19.130",
     "commit-and-tag-version": "^12",
     "constructs": "^10.0.0",
-    "projen": "^0.99.27",
+    "projen": "^0.99.33",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
   "dependencies": {
     "case": "^1.6.3",
-    "projen": "^0.99.27"
+    "projen": "^0.99.33"
   },
   "pnpm": {},
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "onFail": "ignore"
+    }
+  },
   "main": "lib/index.js",
   "license": "MIT",
   "publishConfig": {
