@@ -1,5 +1,16 @@
 # @nikovirtala/projen-bundle-lambda-function-code
 
+> [!WARNING]
+> **This package is deprecated** and won't get new features or fixes. Use [`@nikovirtala/projen-constructs`](https://github.com/nikovirtala/projen-constructs) instead.
+>
+> Replace the dev dependency `@nikovirtala/projen-bundle-lambda-function-code` with `@nikovirtala/projen-constructs`, then change the import:
+>
+> ```typescript
+> import { Bundler, LambdaFunctionCodeBundle, LambdaFunctionCodeBundler } from "@nikovirtala/projen-constructs";
+> ```
+>
+> See the [migration guide](https://github.com/nikovirtala/projen-constructs#migrating-from-the-standalone-packages) for the steps and the differences to expect.
+
 A Projen component for automatically bundling AWS Lambda function code using esbuild.
 
 ## Features
